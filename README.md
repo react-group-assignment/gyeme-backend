@@ -1,2 +1,2 @@
 # gyeme-backend
-backend repor for group assignment
+backend repo for group assignment
