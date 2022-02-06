@@ -30,6 +30,7 @@ app.post('/api/upload', async (req, res)=> {
             upload_preset: 'default_unsigned'
         })
         console.log(uploadedResponse)
+        const image = uploadedResponse.url
         res.json({msg: "congratualtions!!! you've uploaded an image"})
     } catch (error) {
         console.error(error)
@@ -39,10 +40,20 @@ app.post('/api/upload', async (req, res)=> {
 //create a class
 app.post("/classes", async (req, res) =>{
     try {
+
+        const fileString = req.body.image
+        const uploadedResponse = await cloudinary.uploader.upload(fileString, {
+            upload_preset: 'default_unsigned'
+        })
+
+        const image = uploadedResponse.url
+
+        console.log(req.body)
+
         const {name, description, members_only} = req.body
         const newClass = await pool.query(
-            "INSERT INTO classes (name, description, members_only) VALUES($1, $2, $3) RETURNING *",
-            [name, description, members_only]
+            "INSERT INTO classes (name, description, members_only, image) VALUES($1, $2, $3, $4) RETURNING *",
+            [name, description, members_only, image]
         )
         res.json(newClass.rows[0])
     } catch (error) {
@@ -151,3 +162,4 @@ app.get("/users", async (req, res) => {
 app.listen(5000, () => {
     console.log('Server has started on port 5000')
 })
+
