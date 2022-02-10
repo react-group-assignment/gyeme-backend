@@ -3,16 +3,19 @@ const app = express();
 const cors = require("cors")
 const Pool = require("pg").Pool;
 const { cloudinary } = require('./utils/cloudinary')
-
+require('dotenv').config()
 
 // Postgres Credentials
 const pool = new Pool({
-    user: "postgres",
-    password: "postgres",
-    host: "localhost",
-    port: "5433", // Port may differ between users
-    database: "gyeme"
+    connectionString: process.env.DATABASE_URL
+    // user: "postgres",
+    // password: "postgres",
+    // host: "localhost",
+    // port: "5433", // Port may differ between users
+    // database: "gyeme"
 })
+
+const port = process.env.PORT || 5000
 
 app.use(cors())
 app.use(express.json({ limit: '50mb'}))
@@ -180,6 +183,6 @@ app.get("/trainers", async (req, res)=> {
     }
 })
 
-app.listen(5000, () => {
+app.listen(port, () => {
     console.log('Server has started on port 5000')
 })
