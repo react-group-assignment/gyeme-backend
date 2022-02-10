@@ -8,10 +8,7 @@ require('dotenv').config()
 
 // Postgres Credentials
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
+    connectionString: process.env.DATABASE_URL
 })
 
 app.use(cors())
@@ -183,3 +180,5 @@ app.get("/trainers", async (req, res)=> {
         console.error(error.message)
     }
 })
+
+module.exports = app
