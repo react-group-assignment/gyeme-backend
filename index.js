@@ -14,8 +14,6 @@ const pool = new Pool({
     database: "gyeme"
 })
 
-
-
 app.use(cors())
 app.use(express.json({ limit: '50mb'}))
 app.use(express.urlencoded({extended: true}))
@@ -40,16 +38,12 @@ app.post('/api/upload', async (req, res)=> {
 //create a class
 app.post("/classes", async (req, res) =>{
     try {
-
         const fileString = req.body.image
         const uploadedResponse = await cloudinary.uploader.upload(fileString, {
             upload_preset: 'default_unsigned'
         })
-
         const image = uploadedResponse.url
-
-        console.log(req.body)
-
+        // console.log(req.body)
         const {name, description, members_only} = req.body
         const newClass = await pool.query(
             "INSERT INTO classes (name, description, members_only, image) VALUES($1, $2, $3, $4) RETURNING *",
@@ -102,7 +96,7 @@ app.delete("/classes/:id", async (req, res) => {
 })
 
 //get all classes
-app.get("/classes", async(req,res) =>{
+app.get("/classes", async (req,res) =>{
     try {
         const allClasses = await pool.query("SELECT * FROM classes")
         res.json(allClasses.rows)
@@ -116,8 +110,8 @@ app.post("/users", async (req, res) => {
     try {
         const { username, email, password, role_id, location_id} = req.body
         const newUser = await pool.query(
-            "INSERT INTO users (username, email, password, role_id, location_id) VALUES($1, $2, $3, $4, $5) RETURNING *",
-            [username, email, password, role_id, location_id]
+            "INSERT INTO users (username, email, role_id, location_id) VALUES($1, $2, $3, $4) RETURNING *",
+            [username, email, role_id, location_id]
         )
         res.json(newUser.rows[0])
     } catch (error) {
@@ -133,6 +127,19 @@ app.get("/users/:id", async (req, res) => {
         res.json(user.rows[0])
     } catch (error) {
         console.error(error.message)
+    }
+})
+
+// check current user's role Id
+app.get("/role", async (req, res) => {
+    try {
+        const email = req.body.email
+        console.log(email)
+        const user = await pool.query("SELECT * FROM users WHERE email = $1", [email])
+        // console.log(user.rows[0].role_id)
+        res.json(user.rows[0].role_id)
+    } catch (error) {
+        console.log(error.message)
     }
 })
 
@@ -153,7 +160,21 @@ app.delete("/users/:id", async (req, res) => {
 app.get("/users", async (req, res) => {
     try {
         const allUsers = await pool.query("SELECT * FROM users")
+        console.log(allUsers)
         res.json(allUsers.rows)
+    } catch (error) {
+        console.error(error.message)
+    }
+})
+
+
+// get all trainers
+app.get("/trainers", async (req, res)=> {
+    try {
+        const role_id = 1
+        const trainers = await pool.query("SELECT * FROM users WHERE role_id = $1", [role_id])
+        console.log(trainers)
+        res.json(trainers.rows)
     } catch (error) {
         console.error(error.message)
     }
@@ -162,4 +183,3 @@ app.get("/users", async (req, res) => {
 app.listen(5000, () => {
     console.log('Server has started on port 5000')
 })
-
