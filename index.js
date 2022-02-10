@@ -167,23 +167,14 @@ app.get("/users", async (req, res) => {
     }
 })
 
-//get all trainers
-// app.get("/trainers", async (req, res)=> {
-//     try {
-//         const role_id = 1
-//         const allTrainers = await pool.query("SELECT * FROM users WHERE role_id = $1", [role_id])
-//         console.log(allTrainers)
-//     } catch (error) {
-//         console.error(error.message)
-//     }
-// })
 
+// get all trainers
 app.get("/trainers", async (req, res)=> {
     try {
-        const email = req.body.email
-        console.log(email)
-        const thisTrainer = await pool.query("SELECT * FROM users WHERE email = $1", [email])
-        console.log(thisTrainer)
+        const role_id = 1
+        const trainers = await pool.query("SELECT * FROM users WHERE role_id = $1", [role_id])
+        console.log(trainers)
+        res.json(trainers.rows)
     } catch (error) {
         console.error(error.message)
     }
