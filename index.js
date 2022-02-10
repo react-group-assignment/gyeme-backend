@@ -108,7 +108,7 @@ app.get("/classes", async (req,res) =>{
 //create a user
 app.post("/users", async (req, res) => {
     try {
-        const { username, email, password, role_id, location_id} = req.body
+        const { username, email, role_id, location_id} = req.body
         const newUser = await pool.query(
             "INSERT INTO users (username, email, role_id, location_id) VALUES($1, $2, $3, $4) RETURNING *",
             [username, email, role_id, location_id]
