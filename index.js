@@ -3,7 +3,6 @@ const app = express();
 const cors = require("cors")
 const Pool = require("pg").Pool;
 const { cloudinary } = require('./utils/cloudinary')
-const {} = require('./userPermissions')
 
 
 // Postgres Credentials
@@ -131,6 +130,19 @@ app.get("/users/:id", async (req, res) => {
     }
 })
 
+// check current user's role Id
+app.get("/role", async (req, res) => {
+    try {
+        const email = req.body.email
+        console.log(email)
+        const user = await pool.query("SELECT * FROM users WHERE email = $1", [email])
+        // console.log(user.rows[0].role_id)
+        res.json(user.rows[0].role_id)
+    } catch (error) {
+        console.log(error.message)
+    }
+})
+
 //delete a user
 app.delete("/users/:id", async (req, res) => {
     try {
@@ -148,6 +160,7 @@ app.delete("/users/:id", async (req, res) => {
 app.get("/users", async (req, res) => {
     try {
         const allUsers = await pool.query("SELECT * FROM users")
+        console.log(allUsers)
         res.json(allUsers.rows)
     } catch (error) {
         console.error(error.message)
@@ -169,8 +182,8 @@ app.get("/trainers", async (req, res)=> {
     try {
         const email = req.body.email
         console.log(email)
-        const allTrainers = await pool.query("SELECT * FROM users WHERE email = $1", [email])
-        console.log(allTrainers)
+        const thisTrainer = await pool.query("SELECT * FROM users WHERE email = $1", [email])
+        console.log(thisTrainer)
     } catch (error) {
         console.error(error.message)
     }
