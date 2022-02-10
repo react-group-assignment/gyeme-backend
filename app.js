@@ -12,11 +12,6 @@ const pool = new Pool({
     ssl: {
         rejectUnauthorized: false
     }
-    // user: "postgres",
-    // password: "postgres",
-    // host: "localhost",
-    // port: "5433", // Port may differ between users
-    // database: "gyeme"
 })
 
 app.use(cors())
