@@ -168,7 +168,6 @@ app.get("/users", async (req, res) => {
     }
 })
 
-
 // get all trainers
 app.get("/trainers", async (req, res)=> {
     try {
@@ -176,6 +175,67 @@ app.get("/trainers", async (req, res)=> {
         const trainers = await pool.query("SELECT * FROM users WHERE role_id = $1", [role_id])
         console.log(trainers)
         res.json(trainers.rows)
+    } catch (error) {
+        console.error(error.message)
+    }
+})
+
+//get all locations
+app.get("/locations", async (req, res) => {
+    try {
+        const allLocations = await pool.query("SELECT * FROM locations")
+        console.log(allLocations)
+        res.json(allLocations.rows)
+    } catch (error) {
+        console.error(error.message)
+    }
+})
+
+//get all posts
+app.get("/posts", async (req, res) => {
+    try {
+        const allPosts = await pool.query("SELECT * FROM posts")
+        console.log(allPosts)
+        res.json(allPosts.rows)
+    } catch (error) {
+        console.error(error.message)
+    }
+})
+
+//create a post
+app.post("/posts", async (req, res) => {
+    try {
+        const { body, user_id, title } = req.body
+        const newPost = await pool.query(
+            "INSERT INTO posts (body, user_id, title) VALUES($1, $2, $3) RETURNING *",
+            [body, user_id, title]
+        )
+        res.json(newPost.rows[0])
+    } catch (error) {
+        console.error(error.message)
+    }
+})
+
+//get all comments
+app.get("/comments", async (req, res) => {
+    try {
+        const allComments = await pool.query("SELECT * FROM comments")
+        console.log(allComments)
+        res.json(allComments.rows)
+    } catch (error) {
+        console.error(error.message)
+    }
+})
+
+//create a comment
+app.post("/comments", async (req, res) => {
+    try {
+        const { body, user_id, post_id } = req.body
+        const newComment = await pool.query(
+            "INSERT INTO comments (body, user_id, post_id) VALUES($1, $2, $3) RETURNING *",
+            [body, user_id, post_id]
+        )
+        res.json(newComment.rows[0])
     } catch (error) {
         console.error(error.message)
     }
