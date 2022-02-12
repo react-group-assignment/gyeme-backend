@@ -4,7 +4,9 @@
   "description": "backend repo for group assignment",
   "main": "index.js",
   "scripts": {
+
     "test": "jest",
+
     "dev": "npx nodemon",
     "start": "node index.js"
   },
