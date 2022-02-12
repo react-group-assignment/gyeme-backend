@@ -1,34 +1,23 @@
-
 const express = require("express")
 const app = express();
 const cors = require("cors")
 const Pool = require("pg").Pool;
 const { cloudinary } = require('./utils/cloudinary');
-const { port } = require("pg/lib/defaults");
+const { response } = require("express");
 require('dotenv').config()
-const localport = process.env.PORT || 5000
-
 
 // Postgres Credentials
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
+    connectionString: process.env.DATABASE_URL
 })
 
-// Postgres Credentials when using localhost.
-// const pool = new Pool({
-//  user: "postgres",
-//  password: "postgres",
-//  host: "localhost",
-//  port: "5433", // Port may differ between users
-//  database: "gyeme"
-// })
-
 app.use(cors())
-app.use(express.json({ limit: '50mb'}))
-app.use(express.urlencoded({extended: true}))
+app.use(express.json())
+// app.use(express.urlencoded({extended: true}))
+
+app.get('/', (request, response) => {
+    response.send({ info: "Gyeme API app"})
+})
 
 //ROUTES:
 
@@ -120,7 +109,7 @@ app.get("/classes", async (req,res) =>{
 //create a user
 app.post("/users", async (req, res) => {
     try {
-        const { username, email, role_id, location_id} = req.body
+        const { username, email, password, role_id, location_id} = req.body
         const newUser = await pool.query(
             "INSERT INTO users (username, email, role_id, location_id) VALUES($1, $2, $3, $4) RETURNING *",
             [username, email, role_id, location_id]
@@ -178,7 +167,6 @@ app.get("/users", async (req, res) => {
         console.error(error.message)
     }
 })
-
 
 // get all trainers
 app.get("/trainers", async (req, res)=> {
@@ -253,9 +241,4 @@ app.post("/comments", async (req, res) => {
     }
 })
 
-app.listen(localport, () => {
-
-
-
-    console.log('Server has started on port 5000')
-})
+module.exports = app
